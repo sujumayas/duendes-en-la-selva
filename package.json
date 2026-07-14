@@ -1,0 +1,11 @@
+{
+  "name": "duendes-en-la-selva",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/dev-server.js",
+    "test": "node --test",
+    "check": "node --check src/engine.js && node --check src/main.js && node --check scripts/dev-server.js"
+  }
+}

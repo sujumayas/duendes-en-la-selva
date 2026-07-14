@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#14261a" />
+    <title>Duendes en la Selva</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="vines vines-left" aria-hidden="true"></div>
+    <div class="vines vines-right" aria-hidden="true"></div>
+
+    <main class="game-shell">
+      <header class="titlebar">
+        <div>
+          <p class="eyebrow">UNA AVENTURA DE SUPERVIVENCIA</p>
+          <h1>DUENDES <span>EN LA SELVA</span></h1>
+        </div>
+        <button id="soundButton" class="icon-button" type="button" aria-label="Activar o silenciar sonido">♪</button>
+      </header>
+
+      <section class="layout">
+        <aside class="panel status-panel" aria-label="Estado del aventurero">
+          <div class="portrait-wrap"><canvas id="portrait" width="72" height="72"></canvas></div>
+          <h2>Musguito</h2>
+          <p class="role">duende explorador</p>
+          <div class="stat-row"><span>VIDA</span><div class="meter"><i id="healthBar"></i></div><b id="healthText">10/10</b></div>
+          <div class="stat-row"><span>DÍA</span><b id="dayText">1</b></div>
+          <div class="stat-row"><span>PASOS</span><b id="stepsText">0</b></div>
+          <div class="danger-card">
+            <div><span>FACTOR DE APARICIÓN</span><b id="dangerText">2%</b></div>
+            <div class="danger-meter"><i id="dangerBar"></i></div>
+            <small>Crece mientras permaneces en el mapa.</small>
+          </div>
+          <button id="helpButton" class="wood-button wide" type="button">CÓMO JUGAR</button>
+          <button id="restartButton" class="text-button" type="button">Nueva partida</button>
+        </aside>
+
+        <section class="board-column">
+          <div class="map-frame">
+            <canvas id="gameCanvas" width="576" height="576" aria-label="Mapa de la selva de 12 por 12 casillas"></canvas>
+            <div id="toast" class="toast" role="status" aria-live="polite"></div>
+          </div>
+          <div class="controls-strip">
+            <div class="key-hint"><kbd>WASD</kbd><span>CAMINAR</span></div>
+            <div class="key-hint"><kbd>E</kbd><span>INTERACTUAR</span></div>
+            <div class="key-hint"><kbd>C</kbd><span>FABRICAR</span></div>
+            <div class="key-hint"><kbd>B</kbd><span>CONSTRUIR</span></div>
+          </div>
+          <div class="touch-controls" aria-label="Controles táctiles">
+            <div class="dpad">
+              <button data-move="up" aria-label="Arriba">▲</button>
+              <button data-move="left" aria-label="Izquierda">◀</button>
+              <button data-move="down" aria-label="Abajo">▼</button>
+              <button data-move="right" aria-label="Derecha">▶</button>
+            </div>
+            <button id="interactButton" class="action-button">E<small>ACCIÓN</small></button>
+          </div>
+        </section>
+
+        <aside class="panel inventory-panel" aria-label="Mochila y acciones">
+          <h2>MOCHILA</h2>
+          <div id="resources" class="resource-grid"></div>
+          <h3>HERRAMIENTAS</h3>
+          <div id="tools" class="tool-grid"></div>
+          <div class="action-stack">
+            <button id="craftButton" class="wood-button" type="button"><span>⚒</span> FABRICAR <kbd>C</kbd></button>
+            <button id="buildButton" class="wood-button moss" type="button"><span>⌂</span> CONSTRUIR <kbd>B</kbd></button>
+          </div>
+          <div class="legend">
+            <h3>LEYENDA</h3>
+            <p><i class="dot exit"></i> Salida <i class="dot dungeon"></i> Calabozo</p>
+            <p><i class="dot item"></i> Material <i class="dot structure"></i> Estructura</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <dialog id="gameDialog">
+      <div class="dialog-card">
+        <button id="dialogClose" class="dialog-close" aria-label="Cerrar">×</button>
+        <p id="dialogKicker" class="eyebrow"></p>
+        <h2 id="dialogTitle"></h2>
+        <div id="dialogBody"></div>
+        <div id="dialogActions" class="dialog-actions"></div>
+      </div>
+    </dialog>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

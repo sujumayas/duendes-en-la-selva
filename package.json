@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "npm run check && npm test && node scripts/build.js",
     "start": "node scripts/dev-server.js",
     "test": "node --test",
-    "check": "node --check src/engine.js && node --check src/main.js && node --check scripts/dev-server.js"
+    "check": "node --check src/engine.js && node --check src/main.js && node --check scripts/dev-server.js && node --check scripts/build.js"
   }
 }

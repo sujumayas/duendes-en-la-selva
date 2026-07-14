@@ -37,3 +37,16 @@ En pantallas táctiles aparecen una cruceta y un botón de acción. La partida s
 npm test
 npm run check
 ```
+
+## Desplegar en Netlify
+
+Conecta este repositorio a un proyecto de Netlify. La configuración incluida en
+`netlify.toml` ejecuta las verificaciones, genera `dist/` y publica únicamente los
+archivos del juego; no es necesario configurar manualmente el comando de build ni
+el directorio de publicación.
+
+Para comprobar localmente el mismo build antes de subir cambios:
+
+```bash
+npm run build
+```

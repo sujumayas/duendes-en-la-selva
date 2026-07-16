@@ -8,6 +8,7 @@ await mkdir(output, { recursive: true });
 
 await Promise.all([
   cp(new URL("index.html", root), new URL("index.html", output)),
+  cp(new URL("editor.html", root), new URL("editor.html", output)),
   cp(new URL("styles.css", root), new URL("styles.css", output)),
   cp(new URL("src/", root), new URL("src/", output), { recursive: true }),
 ]);

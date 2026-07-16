@@ -22,12 +22,14 @@
 
       <section class="layout">
         <aside class="panel status-panel" aria-label="Estado del aventurero">
+          <div id="toast" class="toast" role="status" aria-live="polite">La selva te observa en silencio.</div>
           <div class="portrait-wrap"><canvas id="portrait" width="72" height="72"></canvas></div>
           <h2>Musguito</h2>
           <p class="role">duende explorador</p>
           <div class="stat-row"><span>VIDA</span><div class="meter"><i id="healthBar"></i></div><b id="healthText">10/10</b></div>
           <div class="stat-row"><span>DÍA</span><b id="dayText">1</b></div>
           <div class="stat-row"><span>PASOS</span><b id="stepsText">0</b></div>
+          <div class="stat-row"><span>NIVEL</span><b id="levelText">1</b></div>
           <div class="danger-card">
             <div><span>FACTOR DE APARICIÓN</span><b id="dangerText">2%</b></div>
             <div class="danger-meter"><i id="dangerBar"></i></div>
@@ -40,13 +42,13 @@
         <section class="board-column">
           <div class="map-frame">
             <canvas id="gameCanvas" width="576" height="576" aria-label="Mapa de la selva de 12 por 12 casillas"></canvas>
-            <div id="toast" class="toast" role="status" aria-live="polite"></div>
           </div>
           <div class="controls-strip">
             <div class="key-hint"><kbd>WASD</kbd><span>CAMINAR</span></div>
             <div class="key-hint"><kbd>E</kbd><span>INTERACTUAR</span></div>
             <div class="key-hint"><kbd>C</kbd><span>FABRICAR</span></div>
             <div class="key-hint"><kbd>B</kbd><span>CONSTRUIR</span></div>
+            <div class="key-hint"><kbd>T</kbd><span>TRAMPA</span></div>
           </div>
           <div class="touch-controls" aria-label="Controles táctiles">
             <div class="dpad">
@@ -55,6 +57,7 @@
               <button data-move="down" aria-label="Abajo">▼</button>
               <button data-move="right" aria-label="Derecha">▶</button>
             </div>
+            <button id="trapButton" class="action-button small">T<small>TRAMPA</small></button>
             <button id="interactButton" class="action-button">E<small>ACCIÓN</small></button>
           </div>
         </section>

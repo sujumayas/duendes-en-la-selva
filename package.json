@@ -7,6 +7,6 @@
     "build": "npm run check && npm test && node scripts/build.js",
     "start": "node scripts/dev-server.js",
     "test": "node --test",
-    "check": "node --check src/engine.js && node --check src/main.js && node --check scripts/dev-server.js && node --check scripts/build.js"
+    "check": "node --check src/engine.js && node --check src/main.js && node --check src/render.js && node --check src/levels.js && node --check src/content.js && node --check src/editor.js && node --check src/pixel-editor.js && node --check scripts/dev-server.js && node --check scripts/build.js"
   }
 }

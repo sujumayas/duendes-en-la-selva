@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#14261a" />
+    <title>Editor — Duendes en la Selva</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .editor-shell { max-width: 1400px; margin: 0 auto; padding: 18px; }
+      .editor-tabs { display: flex; gap: 8px; margin: 0 0 14px; flex-wrap: wrap; }
+      .editor-tabs button { padding: 9px 14px; font-size: 12px; }
+      .editor-tabs button.selected { outline: 3px solid #f0d276; }
+      .editor-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr) 320px; gap: 14px; align-items: start; }
+      .editor-layout.hidden { display: none; }
+      .editor-panel { padding: 14px; }
+      .editor-panel h2 { margin: 0 0 10px; color: #f3d17d; font-family: "Press Start 2P", monospace; font-size: 11px; }
+      .editor-panel h3 { margin: 14px 0 6px; color: #b9cf8f; font-family: "Press Start 2P", monospace; font-size: 9px; }
+      .level-list { display: grid; gap: 6px; margin-bottom: 10px; }
+      .level-list button { text-align: left; padding: 8px; font-size: 13px; }
+      .level-list button.selected { outline: 3px solid #f0d276; }
+      .level-list button.builtin { opacity: .65; }
+      .level-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+      .level-buttons button { flex: 1; min-width: 60px; padding: 7px 4px; font-size: 12px; }
+      .brush-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .brush-grid button { padding: 7px 4px; font-size: 12px; }
+      .brush-grid button.selected { outline: 3px solid #f0d276; }
+      .editor-form { display: grid; gap: 8px; font-size: 14px; }
+      .editor-form label { display: grid; gap: 3px; color: #cbd1b6; }
+      .editor-form label.inline { display: flex; align-items: center; gap: 8px; }
+      .editor-form input[type="text"], .editor-form input[type="number"], .editor-form select { padding: 6px; background: #14261b; color: #e8e4cf; border: 2px solid #50613a; font: inherit; }
+      .editor-form .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .validation { margin-top: 12px; padding: 10px; border: 2px solid #50613a; background: #14261b; font-size: 13px; }
+      .validation p { margin: 4px 0; }
+      .validation .ok { color: #9fce7c; }
+      .validation .issue { color: #e0a05a; }
+      .seed-row { display: flex; gap: 8px; margin: 10px 0; align-items: center; }
+      .seed-row input { width: 110px; padding: 6px; background: #14261b; color: #e8e4cf; border: 2px solid #50613a; font: inherit; }
+      #editorCanvas { display: block; width: 100%; max-width: 576px; image-rendering: pixelated; border: 4px solid #76502e; cursor: crosshair; background: #14261b; }
+      .export-area { width: 100%; min-height: 140px; background: #14261b; color: #cbd1b6; border: 2px solid #50613a; font-family: monospace; font-size: 12px; }
+      .hint-copy { color: #8fa579; font-size: 12px; margin: 6px 0 0; }
+      .file-panel { margin-top: 14px; }
+      /* --- editor de píxeles --- */
+      .pixel-editor { display: grid; gap: 10px; }
+      .pixel-canvas { display: block; width: 100%; max-width: 352px; image-rendering: pixelated; border: 4px solid #76502e; cursor: crosshair; }
+      .pixel-canvas.disabled { cursor: not-allowed; opacity: .7; }
+      .pixel-palette { display: flex; flex-wrap: wrap; gap: 6px; }
+      .pixel-swatch { width: 28px; height: 28px; border: 2px solid #50613a; padding: 0; cursor: pointer; }
+      .pixel-swatch.selected { outline: 3px solid #f0d276; }
+      .pixel-swatch.transparent { background: repeating-conic-gradient(#2a3a2e 0% 25%, #22302a 0% 50%) 0 / 12px 12px; }
+      .pixel-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .pixel-controls input[type="color"] { width: 44px; height: 32px; padding: 0; border: 2px solid #50613a; background: #14261b; }
+      .pixel-preview { width: 96px; height: 96px; image-rendering: pixelated; border: 3px solid #76502e; }
+      .pixel-preview-label { color: #8fa579; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <main class="editor-shell">
+      <header class="titlebar">
+        <div>
+          <p class="eyebrow">HERRAMIENTA DE DESARROLLO</p>
+          <h1>EDITOR <span>DEL JUEGO</span></h1>
+        </div>
+        <a class="text-button" href="index.html">← Volver al juego</a>
+      </header>
+
+      <nav class="editor-tabs" id="editorTabs">
+        <button class="wood-button" type="button" data-tab="niveles">NIVELES</button>
+        <button class="wood-button" type="button" data-tab="terrenos">TERRENOS</button>
+        <button class="wood-button" type="button" data-tab="objetos">OBJETOS</button>
+        <button class="wood-button" type="button" data-tab="monstruos">MONSTRUOS</button>
+      </nav>
+
+      <section class="editor-layout" id="tab-niveles">
+        <aside class="panel editor-panel">
+          <h2>NIVELES</h2>
+          <div id="levelList" class="level-list"></div>
+          <div class="level-buttons">
+            <button id="addLevel" class="wood-button" type="button">+ Añadir</button>
+            <button id="removeLevel" class="wood-button moss" type="button">– Quitar</button>
+            <button id="moveUp" class="wood-button" type="button">▲</button>
+            <button id="moveDown" class="wood-button" type="button">▼</button>
+          </div>
+          <p class="hint-copy">El borrador se guarda solo en este navegador. Usa «Exportar» para llevarlo al juego.</p>
+        </aside>
+
+        <section class="panel editor-panel">
+          <h2 id="canvasTitle">MAPA</h2>
+          <canvas id="editorCanvas" width="576" height="576"></canvas>
+          <div class="seed-row">
+            <label for="seedInput">Semilla</label>
+            <input id="seedInput" type="number" value="1101" />
+            <button id="generateRandom" class="wood-button" type="button">GENERAR ALEATORIO</button>
+          </div>
+          <div id="validation" class="validation"></div>
+        </section>
+
+        <aside class="panel editor-panel">
+          <h2>HERRAMIENTAS</h2>
+          <h3>TERRENO</h3>
+          <div class="brush-grid" id="terrainBrushes"></div>
+          <h3>OBJETOS</h3>
+          <div class="brush-grid" id="featureBrushes"></div>
+          <h3>ESPECIAL</h3>
+          <div class="brush-grid" id="specialBrushes"></div>
+
+          <h3>AJUSTES DEL NIVEL</h3>
+          <form class="editor-form" id="levelForm">
+            <label>Nombre <input type="text" data-field="name" /></label>
+            <label>Intro (aviso al entrar) <input type="text" data-field="intro" /></label>
+            <div class="pair">
+              <label>Troncos por árbol <input type="number" min="1" max="9" data-field="logsPerTree" /></label>
+              <label>Tope de amenaza <input type="number" min="0.02" max="1" step="0.01" data-field="encounters.cap" /></label>
+            </div>
+            <div class="pair">
+              <label>Amenaza base <input type="number" min="0" max="1" step="0.01" data-field="encounters.base" /></label>
+              <label>Amenaza por paso <input type="number" min="0" max="0.05" step="0.001" data-field="encounters.perStep" /></label>
+            </div>
+            <div class="pair">
+              <label>Peso enemigo <input type="number" min="0" max="1" step="0.01" data-field="encounters.weights.enemy" /></label>
+              <label>Peso mercader <input type="number" min="0" max="1" step="0.01" data-field="encounters.weights.merchant" /></label>
+            </div>
+            <div class="pair">
+              <label>Peso tesoro <input type="number" min="0" max="1" step="0.01" data-field="encounters.weights.treasure" /></label>
+              <label>Victoria sin lanza <input type="number" min="0" max="1" step="0.01" data-field="encounters.unarmedWinChance" /></label>
+            </div>
+            <h3>BOTÍN RARO DE ESTE NIVEL</h3>
+            <div id="lootChecks"></div>
+            <h3>MONSTRUOS DEL NIVEL (MÁX. 2)</h3>
+            <div id="monsterChecks"></div>
+          </form>
+        </aside>
+      </section>
+
+      <section class="editor-layout hidden" id="tab-contenido">
+        <aside class="panel editor-panel">
+          <h2 id="contentListTitle">TERRENOS</h2>
+          <div id="contentList" class="level-list"></div>
+          <div class="level-buttons">
+            <button id="addContent" class="wood-button" type="button">+ Añadir</button>
+            <button id="removeContent" class="wood-button moss" type="button">– Quitar</button>
+          </div>
+          <p class="hint-copy" id="contentHint"></p>
+        </aside>
+
+        <section class="panel editor-panel">
+          <h2>SPRITE (16×16)</h2>
+          <div id="pixelEditor"></div>
+          <div id="contentValidation" class="validation"></div>
+        </section>
+
+        <aside class="panel editor-panel">
+          <h2>PROPIEDADES</h2>
+          <form class="editor-form" id="contentForm"></form>
+        </aside>
+      </section>
+
+      <section class="panel editor-panel file-panel">
+        <h2>ARCHIVO</h2>
+        <div class="level-buttons">
+          <button id="exportLevelsButton" class="wood-button" type="button">EXPORTAR NIVELES</button>
+          <button id="exportContentButton" class="wood-button" type="button">EXPORTAR CONTENIDO</button>
+          <button id="copyButton" class="wood-button" type="button">COPIAR</button>
+          <button id="importButton" class="wood-button moss" type="button">IMPORTAR</button>
+        </div>
+        <p class="hint-copy">«EXPORTAR NIVELES» genera src/levels.js y «EXPORTAR CONTENIDO» genera src/content.js. Pega cualquiera de los dos y pulsa IMPORTAR: el editor detecta cuál es. Recuerda ejecutar «npm run build» tras pegar los archivos.</p>
+        <textarea id="exportArea" class="export-area" spellcheck="false" placeholder="Pulsa EXPORTAR NIVELES o EXPORTAR CONTENIDO, o pega aquí un levels.js / content.js y pulsa IMPORTAR."></textarea>
+      </section>
+    </main>
+    <script type="module" src="src/editor.js"></script>
+  </body>
+</html>
